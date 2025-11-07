@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Shield } from "lucide-react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
@@ -13,6 +14,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -30,40 +32,53 @@ const Signup = () => {
 
     setLoading(true);
 
-    // Mock registration - in production, this would call your auth API
-    setTimeout(() => {
-      if (name && email && password) {
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/signup", {
+        name,
+        email,
+        password,
+        confirmPassword,
+      });
+
+      if (response.data.message) {
         toast({
           title: "Account Created",
           description: "Welcome to FakeInternGuard!",
         });
-        navigate("/detect");
-      } else {
-        toast({
-          title: "Registration Failed",
-          description: "Please fill in all fields",
-          variant: "destructive",
-        });
+        navigate("/login");
       }
+    } catch (error: any) {
+      console.error("Signup error:", error);
+
+      // Extract backend error message if available
+      const errMsg =
+        error.response?.data?.error || "Something went wrong during signup.";
+
+      toast({
+        title: "Signup Failed",
+        description: errMsg,
+        variant: "destructive",
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-secondary/30 via-background to-secondary/20 p-4">
-      <Card className="w-full max-w-md border-2 shadow-xl animate-fade-in">
+      <Card className="w-full max-w-md border-2 border-green-400 shadow-xl animate-fade-in">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <Shield className="h-8 w-8 text-primary" />
+          <div className="mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <Shield className="h-8 w-8 text-green-600" />
           </div>
-          <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
-          <CardDescription className="text-base">
-            Join FakeInternGuard to stay safe from scams
-          </CardDescription>
+          <CardTitle className="text-3xl font-bold text-green-700">
+            Create Account
+          </CardTitle>
         </CardHeader>
+
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1">
               <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
@@ -76,7 +91,7 @@ const Signup = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -89,7 +104,7 @@ const Signup = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -102,7 +117,7 @@ const Signup = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
@@ -117,22 +132,22 @@ const Signup = () => {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
               size="lg"
               disabled={loading}
             >
               {loading ? "Creating account..." : "Sign Up"}
             </Button>
 
-            <div className="text-center text-sm">
+            <div className="text-center text-sm mt-2">
               <span className="text-muted-foreground">Already have an account? </span>
-              <Link to="/login" className="text-primary hover:underline font-medium">
+              <Link to="/login" className="text-green-700 hover:underline font-medium">
                 Sign in
               </Link>
             </div>
 
-            <div className="text-center">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
+            <div className="text-center mt-2">
+              <Link to="/" className="text-sm text-muted-foreground hover:text-green-700">
                 ← Back to Home
               </Link>
             </div>

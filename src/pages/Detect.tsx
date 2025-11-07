@@ -16,6 +16,14 @@ interface PredictionResult {
   real_probability: number;
 }
 
+interface BackendResponse {
+  label: string;
+  proba: {
+    fake: number;
+    real: number;
+  };
+}
+
 const Detect = () => {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +32,7 @@ const Detect = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!text.trim()) {
       toast({
         title: "Error",
@@ -38,7 +46,7 @@ const Detect = () => {
     setResult(null);
 
     try {
-      const response = await axios.post<PredictionResult>(
+      const response = await axios.post<BackendResponse>(
         "http://127.0.0.1:5000/predict",
         { text },
         {
@@ -48,7 +56,15 @@ const Detect = () => {
         }
       );
 
-      setResult(response.data);
+      console.log("API Response:", response.data);
+
+      const data = response.data;
+      setResult({
+        label: data.label || "Unknown",
+        fake_probability: data?.proba?.fake ?? 0,
+        real_probability: data?.proba?.real ?? 0,
+      });
+
       toast({
         title: "Analysis Complete",
         description: "The job posting has been analyzed successfully",
@@ -65,16 +81,17 @@ const Detect = () => {
     }
   };
 
-  const exampleText = "Work from home, earn $3000 weekly without experience. Send your details now! No interview required. Immediate start available. Just pay a small registration fee to begin.";
+  const exampleText =
+    "Work from home, earn $3000 weekly without experience. Send your details now! No interview required. Immediate start available. Just pay a small registration fee to begin.";
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
-      <main className="flex-1 py-12 md:py-20">
+
+      <main className="flex-1 py-12 md:py-10">
         <div className="container max-w-4xl">
           <div className="text-center mb-12 space-y-4 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl font-bold">
+            <h1 className="text-4xl md:text-5xl font-bold text-green-700">
               Detect Fake Internships
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -82,9 +99,9 @@ const Detect = () => {
             </p>
           </div>
 
-          <Card className="border-2 shadow-lg animate-slide-up">
+          <Card className="shadow-lg animate-slide-up border-green-400">
             <CardHeader>
-              <CardTitle className="text-2xl">Job Description Analyzer</CardTitle>
+              <CardTitle className="text-2xl text-green-700">Job Description Analyzer</CardTitle>
               <CardDescription>
                 Enter the complete job or internship posting text for analysis
               </CardDescription>
@@ -96,7 +113,7 @@ const Detect = () => {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder={exampleText}
-                    className="min-h-[200px] resize-none text-base"
+                    className="min-h-[200px] border-green-500 resize-none text-base placeholder:text-gray-400 placeholder:italic"
                     disabled={loading}
                   />
                   <p className="text-sm text-muted-foreground">
@@ -107,7 +124,7 @@ const Detect = () => {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full text-lg"
+                  className="w-full text-lg bg-green-600 hover:bg-green-700"
                   disabled={loading}
                 >
                   {loading ? (
@@ -137,9 +154,11 @@ const Detect = () => {
           )}
 
           {!result && (
-            <Card className="mt-8 border-primary/20 bg-primary/5">
+            <Card className="mt-8 border-green-200 bg-green-50">
               <CardContent className="pt-6">
-                <h3 className="font-semibold mb-3 text-lg">Red Flags to Watch For:</h3>
+                <h3 className="font-semibold mb-3 text-lg text-green-700">
+                  Red Flags to Watch For:
+                </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>• Unrealistic salary promises for entry-level positions</li>
                   <li>• Requests for upfront payments or registration fees</li>
@@ -152,7 +171,7 @@ const Detect = () => {
           )}
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

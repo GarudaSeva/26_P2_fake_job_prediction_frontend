@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Shield, Zap, Lock, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +9,18 @@ import heroImage from "@/assets/hero-illustration.jpg";
 const Index = () => {
   const scrollToAbout = () => {
     document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleClick = () => {
+    const user = sessionStorage.getItem("user");
+    const navigate = useNavigate();
+
+    if (user) {
+      navigate("/detect");
+    } else {
+      sessionStorage.setItem("redirectAfterLogin", "/detect");
+      navigate("/login");
+    }
   };
 
   return (
@@ -40,7 +52,7 @@ const Index = () => {
                 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link to="/detect">
-                    <Button size="lg" className="w-full sm:w-auto text-lg px-8">
+                    <Button size="lg" className="w-full sm:w-auto text-lg px-8" onClick={handleClick}>
                       Try Now
                       <Zap className="ml-2 h-5 w-5" />
                     </Button>
@@ -143,7 +155,7 @@ const Index = () => {
                   
                   <div className="pt-6">
                     <Link to="/detect">
-                      <Button size="lg" className="w-full sm:w-auto">
+                      <Button size="lg" className="w-full sm:w-auto" onClick={handleClick}>
                         Start Detecting Now
                       </Button>
                     </Link>
