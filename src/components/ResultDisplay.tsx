@@ -3,17 +3,27 @@ import { Card, CardContent } from "@/components/ui/card";
 
 interface ResultDisplayProps {
   label: string;
-  fakeProb: number; // e.g., 0.15
-  realProb: number; // e.g., 0.85
+  probabilities: {
+    fake: number;
+    real: number;
+  };
 }
 
-const ResultDisplay = ({ label, fakeProb, realProb }: ResultDisplayProps) => {
-  // Convert from decimal (0.15) → percentage (15)
+/**
+ * Displays the result of the Fake Job Detection API
+ * with confidence bars and contextual message.
+ */
+const ResultDisplay = ({ label, probabilities }: ResultDisplayProps) => {
+  // Extract probabilities from backend response
+  const fakeProb = probabilities?.fake ?? 0;
+  const realProb = probabilities?.real ?? 0;
+
+  // Convert from decimal (e.g., 0.97) → percentage
   const fakePercent = fakeProb * 100;
   const realPercent = realProb * 100;
 
-  // Detect fake using your backend emoji label
-  const isFake = label.includes("FAKE");
+  // Detect fake using emoji label
+  const isFake = label?.includes("FAKE");
 
   return (
     <Card className="border-2 animate-fade-in hover-lift">
@@ -35,6 +45,7 @@ const ResultDisplay = ({ label, fakeProb, realProb }: ResultDisplayProps) => {
 
         {/* Probability Bars */}
         <div className="space-y-6">
+          {/* Fake Probability */}
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-sm font-medium text-muted-foreground">
@@ -52,6 +63,7 @@ const ResultDisplay = ({ label, fakeProb, realProb }: ResultDisplayProps) => {
             </div>
           </div>
 
+          {/* Real Probability */}
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-sm font-medium text-muted-foreground">

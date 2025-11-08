@@ -3,31 +3,29 @@ import { Search } from "lucide-react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoadingDots from "@/components/LoadingDots";
 import ResultDisplay from "@/components/ResultDisplay";
 
-interface PredictionResult {
-  label: string;
-  fake_probability: number;
-  real_probability: number;
-}
-
 interface BackendResponse {
   label: string;
-  proba: {
-    fake: number;
-    real: number;
-  };
+  probabilities?: { fake: number; real: number };
+  proba?: { fake: number; real: number };
 }
 
 const Detect = () => {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<PredictionResult | null>(null);
+  const [result, setResult] = useState<BackendResponse | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,23 +44,31 @@ const Detect = () => {
     setResult(null);
 
     try {
+      // 🌐 Change API base URL if needed (localhost or production)
       const response = await axios.post<BackendResponse>(
         "http://127.0.0.1:5000/predict",
         { text },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
       console.log("API Response:", response.data);
-
       const data = response.data;
+
+      // ✅ Universal mapping (works for BERT, XGBoost, Logistic)
+      const fakeProb =
+        data?.probabilities?.fake ??
+        data?.proba?.fake ??
+        0;
+      const realProb =
+        data?.probabilities?.real ??
+        data?.proba?.real ??
+        0;
+
       setResult({
         label: data.label || "Unknown",
-        fake_probability: data?.proba?.fake ?? 0,
-        real_probability: data?.proba?.real ?? 0,
+        probabilities: { fake: fakeProb, real: realProb },
       });
 
       toast({
@@ -73,7 +79,8 @@ const Detect = () => {
       console.error("Prediction error:", error);
       toast({
         title: "Error",
-        description: "Failed to analyze the job posting. Please ensure the API server is running.",
+        description:
+          "Failed to analyze the job posting. Please ensure the API server is running.",
         variant: "destructive",
       });
     } finally {
@@ -95,13 +102,16 @@ const Detect = () => {
               Detect Fake Internships
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Paste any internship or job description below and our AI will analyze it for authenticity
+              Paste any internship or job description below and our AI will
+              analyze it for authenticity
             </p>
           </div>
 
           <Card className="shadow-lg animate-slide-up border-green-400">
             <CardHeader>
-              <CardTitle className="text-2xl text-green-700">Job Description Analyzer</CardTitle>
+              <CardTitle className="text-2xl text-green-700">
+                Job Description Analyzer
+              </CardTitle>
               <CardDescription>
                 Enter the complete job or internship posting text for analysis
               </CardDescription>
@@ -147,8 +157,7 @@ const Detect = () => {
             <div className="mt-8">
               <ResultDisplay
                 label={result.label}
-                fakeProb={result.fake_probability}
-                realProb={result.real_probability}
+                probabilities={result.probabilities || { fake: 0, real: 0 }}
               />
             </div>
           )}
@@ -160,11 +169,18 @@ const Detect = () => {
                   Red Flags to Watch For:
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Unrealistic salary promises for entry-level positions</li>
+                  <li>
+                    • Unrealistic salary promises for entry-level positions
+                  </li>
                   <li>• Requests for upfront payments or registration fees</li>
-                  <li>• Vague job descriptions without specific responsibilities</li>
+                  <li>
+                    • Vague job descriptions without specific responsibilities
+                  </li>
                   <li>• No company information or unverifiable contact details</li>
-                  <li>• Pressure to act immediately without proper interview process</li>
+                  <li>
+                    • Pressure to act immediately without proper interview
+                    process
+                  </li>
                 </ul>
               </CardContent>
             </Card>
