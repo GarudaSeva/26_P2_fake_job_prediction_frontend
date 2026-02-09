@@ -44,7 +44,9 @@ const Login = () => {
         // Save user session (optional)
         sessionStorage.setItem("user", JSON.stringify(response.data.user));
 
-        navigate("/");
+        const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/";
+        sessionStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath);
       }
     } catch (error: any) {
       console.error("Login error:", error);

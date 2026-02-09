@@ -7,13 +7,15 @@ import Footer from "@/components/Footer";
 import heroImage from "@/assets/hero-illustration.jpg";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const scrollToAbout = () => {
     document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default link behavior if any remains
     const user = sessionStorage.getItem("user");
-    const navigate = useNavigate();
 
     if (user) {
       navigate("/detect");
@@ -51,12 +53,10 @@ const Index = () => {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/detect">
-                    <Button size="lg" className="w-full sm:w-auto text-lg px-8" onClick={handleClick}>
-                      Try Now
-                      <Zap className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
+                  <Button size="lg" className="w-full sm:w-auto text-lg px-8" onClick={handleClick}>
+                    Try Now
+                    <Zap className="ml-2 h-5 w-5" />
+                  </Button>
                   <Button 
                     size="lg" 
                     variant="outline" 
@@ -154,11 +154,9 @@ const Index = () => {
                   </p>
                   
                   <div className="pt-6">
-                    <Link to="/detect">
-                      <Button size="lg" className="w-full sm:w-auto" onClick={handleClick}>
-                        Start Detecting Now
-                      </Button>
-                    </Link>
+                    <Button size="lg" className="w-full sm:w-auto" onClick={handleClick}>
+                      Start Detecting Now
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

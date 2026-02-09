@@ -11,9 +11,12 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const user = sessionStorage.getItem("user");
+  return user ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -21,16 +24,21 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            {/* <Route path="/" element={<Index />} /> */}
+            <Route path="/" element={<Detect />} />
 
-            {/* ✅ Inline protected route logic */}
-            <Route
+            {/* ✅ Protected Route Logic */}
+            {/* <Route
               path="/detect"
-              element={user ? <Detect /> : <Navigate to="/login" replace />}
-            />
+              element={
+                <ProtectedRoute>
+                  <Detect />
+                </ProtectedRoute>
+              }
+            /> */}
 
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            {/* <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} /> */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

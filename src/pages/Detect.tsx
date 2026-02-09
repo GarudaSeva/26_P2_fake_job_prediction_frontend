@@ -1,3 +1,11 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { useState } from "react";
 import { Search } from "lucide-react";
 import axios from "axios";
@@ -24,6 +32,7 @@ interface BackendResponse {
 
 const Detect = () => {
   const [text, setText] = useState("");
+  const [model, setModel] = useState("bert"); // Default to BERT
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<BackendResponse | null>(null);
   const { toast } = useToast();
@@ -47,7 +56,7 @@ const Detect = () => {
       // 🌐 Change API base URL if needed (localhost or production)
       const response = await axios.post<BackendResponse>(
         "http://127.0.0.1:5000/predict",
-        { text },
+        { text, model }, // Send selected model
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -73,7 +82,7 @@ const Detect = () => {
 
       toast({
         title: "Analysis Complete",
-        description: "The job posting has been analyzed successfully",
+        description: `Analyzed using ${model.toUpperCase()} model`,
       });
     } catch (error) {
       console.error("Prediction error:", error);
@@ -113,7 +122,7 @@ const Detect = () => {
                 Job Description Analyzer
               </CardTitle>
               <CardDescription>
-                Enter the complete job or internship posting text for analysis
+                Select a model and enter the job posting text for analysis
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -131,24 +140,42 @@ const Detect = () => {
                   </p>
                 </div>
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full text-lg bg-green-600 hover:bg-green-700"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <LoadingDots />
-                      <span className="ml-3">Analyzing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Search className="mr-2 h-5 w-5" />
-                      Check Authenticity
-                    </>
-                  )}
-                </Button>
+                <div className="flex flex-col md:flex-row gap-4 items-end">
+                  <div className="w-full md:w-[280px] space-y-2">
+                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Select AI Model
+                    </label>
+                    <Select value={model} onValueChange={setModel}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bert">BERT (Deep Learning)</SelectItem>
+                        <SelectItem value="xgboost">XGBoost (Machine Learning)</SelectItem>
+                        <SelectItem value="logistic">Logistic Regression (Fast)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="flex-1 text-lg bg-green-600 hover:bg-green-700"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <LoadingDots />
+                        <span className="ml-3">Analyzing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Search className="mr-2 h-5 w-5" />
+                        Check Authenticity
+                      </>
+                    )}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
