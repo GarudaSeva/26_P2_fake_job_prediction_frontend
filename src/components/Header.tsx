@@ -64,14 +64,14 @@ const Header = () => {
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-6">
-          {/* <Link
+          <Link
             to="/"
             className={`text-sm font-medium transition-colors hover:text-primary ${
               isActive("/") ? "text-primary" : "text-foreground/60"
             }`}
           >
             Home
-          </Link> */}
+          </Link>
 
           {/* Show only when logged in */}
           {user && (
@@ -87,7 +87,7 @@ const Header = () => {
         </nav>
 
         {/* Right Side: Auth Buttons or Profile */}
-        {/* <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           {!user ? (
             <>
               <Link to="/login">
@@ -118,7 +118,7 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-        </div> */}
+        </div>
       </div>
     </header>
   );
