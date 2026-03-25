@@ -24,21 +24,16 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            {/* <Route path="/" element={<Detect />} /> */}
+            <Route path="/" element={<Detect />} />
+            {/* <Route path="/" element={<Index />} /> */}
+            <Route path="/detect" element={<Detect />} />
 
-            {/* ✅ Protected Route Logic */}
-            <Route
-              path="/detect"
-              element={
-                <ProtectedRoute>
-                  <Detect />
-                </ProtectedRoute>
-              }
-            />
-
+            {/* ✅ Authentication Routes (Commented out as per request) */}
+            {/* 
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup" element={<Signup />} /> 
+            */}
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

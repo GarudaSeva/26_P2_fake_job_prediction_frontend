@@ -62,7 +62,8 @@ const Header = () => {
           </span>
         </Link>
 
-        {/* Navigation Links */}
+        {/* Navigation Links (Commented out as per request) */}
+        {/*
         <nav className="hidden md:flex items-center gap-6">
           <Link
             to="/"
@@ -73,7 +74,6 @@ const Header = () => {
             Home
           </Link>
 
-          {/* Show only when logged in */}
           {user && (
             <Link
               to="/detect"
@@ -85,8 +85,10 @@ const Header = () => {
             </Link>
           )}
         </nav>
+        */}
 
-        {/* Right Side: Auth Buttons or Profile */}
+        {/* Right Side: Auth Buttons or Profile (Commented out as per request) */}
+        {/*
         <div className="flex items-center gap-2">
           {!user ? (
             <>
@@ -119,6 +121,7 @@ const Header = () => {
             </DropdownMenu>
           )}
         </div>
+        */}
       </div>
     </header>
   );
