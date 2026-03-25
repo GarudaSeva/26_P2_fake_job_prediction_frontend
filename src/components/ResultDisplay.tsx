@@ -43,9 +43,9 @@ const ResultDisplay = ({ label, probabilities }: ResultDisplayProps) => {
           )}
         </div>
 
-        {/* Probability Bars */}
+        {/* Probability Bars (Commented out as per request) */}
+        {/*
         <div className="space-y-6">
-          {/* Fake Probability */}
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-sm font-medium text-muted-foreground">
@@ -63,7 +63,6 @@ const ResultDisplay = ({ label, probabilities }: ResultDisplayProps) => {
             </div>
           </div>
 
-          {/* Real Probability */}
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-sm font-medium text-muted-foreground">
@@ -81,6 +80,7 @@ const ResultDisplay = ({ label, probabilities }: ResultDisplayProps) => {
             </div>
           </div>
         </div>
+        */}
 
         {/* Description Message */}
         <div className="mt-6 p-4 bg-muted rounded-lg">
